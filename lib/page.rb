@@ -70,7 +70,7 @@ class PageObject < ConfluenceClient
       puts "             Page: #{title}"
       puts "             Space Key: #{spacekey}"
     end
-    pp JSON.parse(res)['results']
+
     return JSON.parse(res)['results'][0]['id'],
            JSON.parse(res)['results'][0]['version']['number'],
            JSON.parse(res)['results'][0]['status'],
