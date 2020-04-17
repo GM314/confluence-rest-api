@@ -38,7 +38,7 @@ puts "Page URL:     #{page.url}"
 ###########################################################
 
 home_page = PageObject.new('Home', space_key)
-client.create_page_with_parent('my_title99', space_key, 'is it safe?', home_page.id)
+client.create_page_with_parent('My Page Title', space_key, 'My Page Body Content', home_page.id)
 
 ````
 
