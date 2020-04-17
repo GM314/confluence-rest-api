@@ -28,7 +28,7 @@ class ConfluenceClient
   begin
     RestClient.put url, payload, :content_type => 'application/json', :accept => 'json'
   rescue RestClient::ExceptionWithResponse => error
-    puts '*** ERROR: RestClient.post failed'
+    puts '*** ERROR: RestClient.put failed'
     puts error
   end
   end
