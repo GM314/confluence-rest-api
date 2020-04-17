@@ -21,9 +21,6 @@ class ConfluenceClient
   end
 
   def update_page(payload, pageid)
-  #  curl -u admin:admin -X POST -H 'Content-Type: application/json' -d '{"type":"page","title":"new page",
-  # "space":{"key":"TST"},"body":{"storage":{"value":"<p>This is <br/> a new page</p>","representation":
-  # "storage"}}}' http://localhost:8080/confluence/rest/api/content/ | python -mjson.tool
 
   url = "#{@@conf_url}/rest/api/content/#{pageid}?os_username=#{@@login}&os_password=#{@@pwd}"
   puts "PAYLOAD: #{payload}"
