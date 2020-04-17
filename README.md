@@ -43,5 +43,6 @@ client.create_page_with_parent('my_title99', space_key, 'is it safe?', home_page
 ````
 
 ### TODO
+1. Add ability to attach and remove page attachments
 1. Add tests
 
