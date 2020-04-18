@@ -30,7 +30,33 @@ class ConfluenceClient
                   title:    page_obj.title,
                   spacekey: spacekey,
                   content:  content,
-                  version:  version}
+                  version:  version }
+
+    update_page(PagePayload.new(page_meta).page_format, page_obj.id)
+
+  end
+
+  def create_page_with_no_parent(title, spacekey, content)
+
+    page_meta = { type:     'create_page_with_no_parent',
+                  title:    title,
+                  spacekey: spacekey,
+                  content:  content }
+
+    create_page(PagePayload.new(page_meta).page_format)
+
+  end
+
+  def update_page_with_no_parent(page_obj, spacekey, content)
+
+    version = page_obj.version + 1
+
+    page_meta = { type:     'update_page_with_no_parent',
+                  pageid:   page_obj.id,
+                  title:    page_obj.title,
+                  spacekey: spacekey,
+                  content:  content,
+                  version:  version }
 
     update_page(PagePayload.new(page_meta).page_format, page_obj.id)
 
@@ -55,7 +81,7 @@ class ConfluenceClient
     begin
       RestClient.put url, payload, :content_type => 'application/json', :accept => 'json'
     rescue RestClient::ExceptionWithResponse => error
-      puts '*** ERROR: RestClient.post failed'
+      puts '*** ERROR: RestClient.put failed'
       puts error
     end
   end
