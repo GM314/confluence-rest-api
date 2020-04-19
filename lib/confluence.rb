@@ -3,9 +3,9 @@ require 'rest-client'
 class ConfluenceClient
 
   def initialize(url, name, password)
-    @@conf_url   = url
-    @@login = name
-    @@pwd   = password
+    @@conf_url = url
+    @@login    = name
+    @@pwd      = password
   end
 
   def create_page_with_parent(title, spacekey, content, parentid)
