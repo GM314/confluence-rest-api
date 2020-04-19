@@ -16,7 +16,7 @@ user_name   = 'username'
 password    = 'password'
 space_key = 'space'
 
-client  = ConfluenceClient.new(rest_server, username password)
+client  = ConfluenceClient.new(rest_server, username, password)
 
 ########################
 # Query an existing page
