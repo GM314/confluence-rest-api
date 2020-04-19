@@ -51,6 +51,29 @@ class PageObject < ConfluenceClient
     JSON.parse(res)['body']['storage']['value']
   end
 
+  def upload_image(image, img_basename)
+
+    if File.exist?("#{img_basename}/#{image}")
+      payload = {
+          multipart: true,
+          file: File.new("#{img_basename}/#{image}", 'rb'),
+          comment: 'Automated Ruby import',
+          minorEdit: true
+      }
+      url_mod = "#{@@conf_url}/rest/api/content/#{@id}/child/attachment?os_username=#{@@login}&os_password=#{@@pwd}"
+      begin
+        RestClient.post(url_mod, payload, {"X-Atlassian-Token" => "nocheck"})
+        true
+      rescue RestClient::ExceptionWithResponse => e
+        puts Nokogiri.XML(e.response)
+        nil
+      end
+    else
+      puts "*** WARNING: Image can't be found for #{img_basename}/#{image}"
+      nil
+    end
+  end
+
   ##################################################################
   private
   ##################################################################
