@@ -74,16 +74,16 @@ class PageObject < ConfluenceClient
     end
   end
 
-  def delete_image(image_id)
+  def delete_attachment(attach_id)
     begin
-      RestClient.delete "#{@@conf_url}/#{@@urn}/#{image_id}", {params: {
+      RestClient.delete "#{@@conf_url}/#{@@urn}/#{attach_id}", {params: {
           :os_username => @@login, :os_password => @@pwd
       }}
-      # JSON.parse(response)
     rescue RestClient::ExceptionWithResponse => e
       puts Nokogiri.XML(e.response)
+      return nil
     end
-
+    true
   end
 
   def image_id(page_id, image_name)
