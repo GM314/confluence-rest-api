@@ -134,7 +134,8 @@ class PageObject < ConfluenceClient
     if JSON.parse(res)['results'][0].nil?
       puts '*** WARNING: Page ID not found.'
       puts "             Page: #{title}"
-      puts "             Space Key: #{spacekey}"
+      puts "             Space Key: #{@spacekey}"
+      return nil
     end
     # pp JSON.parse(res)['results']
     return JSON.parse(res)['results'][0]['title'],
