@@ -40,10 +40,50 @@ puts "Page URL:     #{page.url}"
 home_page = PageObject.new('Home', space_key)
 client.create_page_with_parent('My Page Title', space_key, 'My Page Body Content', home_page.id)
 
+#############################
+# Add an attachment to a page
+#############################
+
+page_obj = PageObject.new('My Page Title', space_key)
+img_base_name = 'my/image/location'
+image = 'my_image.png'
+if page_obj.attach_binary_file(image, img_base_name).nil?
+  puts "*** WARNING: Image attachment #{image} for #{title} was not successful."
+else
+  puts "Image attachment #{image} for #{title} was successful."
+end
+
+##################################
+# Remove an attachment from a page
+##################################
+
+page_obj = PageObject.new('My Page Title', space_key)
+id = page_obj.attachment_id(page_obj.id, 'my_image.png')
+if id.nil?
+  puts "Attachment doesn't exist."
+else
+  if page_obj.delete_attachment(id).nil?
+    puts "*** WARNING: Attachment with ID #{id} was not deleted."
+  else
+    puts "Attachment with ID #{id} was deleted"
+  end
+end
+
+###############
+# Delete a page
+###############
+
+page_obj = PageObject.new('My Page Title', space_key)
+if page_obj.delete_page(page_obj.id).nil?
+  puts "*** WARNING: Page with ID #{page_obj.id} was not deleted."
+else
+  puts "Page with ID #{page_obj.id} was deleted."
+end
+
+
 ````
 
 ### TODO
-1. Add ability to attach and remove page attachments
-1. Commit to GitHub
 1. Add tests
+1. Commit to GitHub
 
