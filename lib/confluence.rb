@@ -6,6 +6,7 @@ class ConfluenceClient
     @@conf_url = url
     @@login    = name
     @@pwd      = password
+    @@urn = 'rest/api/content'
   end
 
   def create_page_with_parent(title, spacekey, content, parentid)
@@ -66,7 +67,7 @@ class ConfluenceClient
 
   def create_page(payload)
 
-    url = "#{@@conf_url}/rest/api/content?os_username=#{@@login}&os_password=#{@@pwd}"
+    url = "#{@@conf_url}/#{@@urn}?os_username=#{@@login}&os_password=#{@@pwd}"
     begin
       RestClient.post url, payload, :content_type => 'application/json'
     rescue RestClient::ExceptionWithResponse => error
@@ -77,7 +78,7 @@ class ConfluenceClient
 
   def update_page(payload, id)
 
-    url = "#{@@conf_url}/rest/api/content/#{id}?os_username=#{@@login}&os_password=#{@@pwd}"
+    url = "#{@@conf_url}/#{@@urn}/#{id}?os_username=#{@@login}&os_password=#{@@pwd}"
     begin
       RestClient.put url, payload, :content_type => 'application/json', :accept => 'json'
     rescue RestClient::ExceptionWithResponse => error
