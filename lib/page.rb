@@ -51,12 +51,12 @@ class PageObject < ConfluenceClient
     JSON.parse(res)['body']['storage']['value']
   end
 
-  def upload_image(image, img_basename)
+  def attach_binary_file(file_name, file_basename)
 
-    if File.exist?("#{img_basename}/#{image}")
+    if File.exist?("#{file_basename}/#{file_name}")
       payload = {
           multipart: true,
-          file: File.new("#{img_basename}/#{image}", 'rb'),
+          file: File.new("#{file_basename}/#{file_name}", 'rb'),
           comment: 'Automated Ruby import',
           minorEdit: true
       }
@@ -69,7 +69,7 @@ class PageObject < ConfluenceClient
         nil
       end
     else
-      puts "*** WARNING: Image can't be found for #{img_basename}/#{image}"
+      puts "*** WARNING: File can't be found for #{file_basename}/#{file_name}"
       nil
     end
   end
@@ -79,6 +79,7 @@ class PageObject < ConfluenceClient
       RestClient.delete "#{@@conf_url}/#{@@urn}/#{attach_id}", {params: {
           :os_username => @@login, :os_password => @@pwd
       }}
+      # JSON.parse(response)
     rescue RestClient::ExceptionWithResponse => e
       puts Nokogiri.XML(e.response)
       return nil
@@ -86,14 +87,14 @@ class PageObject < ConfluenceClient
     true
   end
 
-  def image_id(page_id, image_name)
+  def attachment_id(page_id, attach_name)
 
-    img = image_name.dup
-    img = CGI.escape(img)
+    fname = attach_name.dup
+    fname = CGI.escape(fname)
 
     begin
       response = RestClient.get "#{@@conf_url}/#{@@urn}/#{page_id}/child/attachment", {params: {
-          :filename => img, 'os_username' => @@login, 'os_password' => @@pwd
+          :filename => fname, 'os_username' => @@login, 'os_password' => @@pwd
       }}
 
       response = JSON.parse(response)
