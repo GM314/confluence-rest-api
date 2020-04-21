@@ -65,7 +65,7 @@ end
 ##################################
 
 page_obj = PageObject.new('My Page Title', space_key)
-id = page_obj.attachment_id(page_obj.id, 'my_image.png')
+id = page_obj.attachment_id('my_image.png')
 if id.nil?
   puts "Attachment doesn't exist."
 else
