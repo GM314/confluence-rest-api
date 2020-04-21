@@ -23,34 +23,41 @@ client  = ConfluenceClient.new(rest_server, username, password)
 ########################
 
 page = PageObject.new('page_title', space_key)
-
-puts "Body:         #{page.rendered_body}"
-puts "Fully styled  #{page.styled_view}"
-puts "ID:           #{page.id}"
-puts "Status:       #{page.status}"
-puts "Version:      #{page.version}"
-puts "Date Created: #{page.created}"
-puts "Date Updated: #{page.last_update}"
-puts "Page URL:     #{page.url}"
+if page.id.nil? 
+    puts '*** WARNING: Unable to open page: page_title'
+else
+    puts "Body:         #{page.rendered_body}"
+    puts "Fully styled  #{page.styled_view}"
+    puts "ID:           #{page.id}"
+    puts "Status:       #{page.status}"
+    puts "Version:      #{page.version}"
+    puts "Date Created: #{page.created}"
+    puts "Date Updated: #{page.last_update}"
+    puts "Page URL:     #{page.url}"
+end
 
 ###########################################################
 # Create a new page with a page titled "Home" as its parent
 ###########################################################
 
 home_page = PageObject.new('Home', space_key)
-client.create_page_with_parent('My Page Title', space_key, 'My Page Body Content', home_page.id)
+unless home_page.id.nil?
+  client.create_page_with_parent('My Page Title', space_key, 'My Page Body Content', home_page.id)
+end
 
 #############################
 # Add an attachment to a page
 #############################
 
 page_obj = PageObject.new('My Page Title', space_key)
-img_base_name = 'my/image/location'
-image = 'my_image.png'
-if page_obj.attach_binary_file(image, img_base_name).nil?
-  puts "*** WARNING: Image attachment #{image} for #{title} was not successful."
-else
-  puts "Image attachment #{image} for #{title} was successful."
+unless page_obj.id.nil?
+  img_base_name = 'my/image/location'
+  image = 'my_image.png'
+  if page_obj.attach_binary_file(image, img_base_name).nil?
+    puts "*** WARNING: Image attachment #{image} for #{title} was not successful."
+  else
+    puts "Image attachment #{image} for #{title} was successful."
+  end
 end
 
 ##################################
