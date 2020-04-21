@@ -98,13 +98,13 @@ class PageObject < ConfluenceClient
     true
   end
 
-  def attachment_id(page_id, attach_name)
+  def attachment_id(attachment_name)
 
-    fname = attach_name.dup
+    fname = attachment_name.dup
     fname = CGI.escape(fname)
 
     begin
-      response = RestClient.get "#{@@conf_url}/#{@@urn}/#{page_id}/child/attachment", {params: {
+      response = RestClient.get "#{@@conf_url}/#{@@urn}/#{@id}/child/attachment", {params: {
           :filename => fname, 'os_username' => @@login, 'os_password' => @@pwd
       }}
 
@@ -136,15 +136,15 @@ class PageObject < ConfluenceClient
       puts "             Page: #{title}"
       puts "             Space Key: #{@spacekey}"
       return nil
+    else
+      return JSON.parse(res)['results'][0]['title'],
+             JSON.parse(res)['results'][0]['id'],
+             JSON.parse(res)['results'][0]['version']['number'],
+             JSON.parse(res)['results'][0]['status'],
+             JSON.parse(res)['results'][0]['history']['createdDate'],
+             JSON.parse(res)['results'][0]['version']['when'],
+             JSON.parse(res)['results'][0]['_links']['webui']
     end
-    # pp JSON.parse(res)['results']
-    return JSON.parse(res)['results'][0]['title'],
-           JSON.parse(res)['results'][0]['id'],
-           JSON.parse(res)['results'][0]['version']['number'],
-           JSON.parse(res)['results'][0]['status'],
-           JSON.parse(res)['results'][0]['history']['createdDate'],
-           JSON.parse(res)['results'][0]['version']['when'],
-           JSON.parse(res)['results'][0]['_links']['webui']
   end
 
 end
