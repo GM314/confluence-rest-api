@@ -1,15 +1,21 @@
+require 'nokogiri'
+
 class PageObject < ConfluenceClient
 
   attr_reader :title, :id, :version, :status, :created, :last_update
 
-  def initialize(title, spacekey)
-    @title    = title
-    @spacekey = spacekey
-    @title, @id, @version, @status, @created, @last_update, @url = get_page_info
+  def initialize(title_or_id, spacekey)
+    if title_or_id.is_a? Integer
+      @title, @id, @version, @status, @created, @last_update, @url = get_page_info_by_id(title_or_id.to_s, spacekey)
+    else
+      @title, @id, @version, @status, @created, @last_update, @url = get_page_info_by_title(title_or_id, spacekey)
+    end
   end
 
   def url
-    @@conf_url + @url
+    unless @url.nil?
+      @@conf_url + @url
+    end
   end
 
   #####################################################
@@ -123,18 +129,18 @@ class PageObject < ConfluenceClient
   ##################################################################
 
   # Here we can return various metadata for a given page.
-  def get_page_info
+  def get_page_info_by_title(title, spacekey)
     begin
       res = RestClient.get "#{@@conf_url}/#{@@urn}", {params: {
-          :title => @title, :spaceKey => @spacekey, :os_username => @@login, :os_password => @@pwd, :expand => 'version,history'
+          :title => title, :spaceKey => spacekey, :os_username => @@login, :os_password => @@pwd, :expand => 'version,history'
       }}
     rescue RestClient::ExceptionWithResponse => e
       puts Nokogiri.XML(e.response)
     end
-    if JSON.parse(res)['results'][0].nil?
+    if res.nil? || JSON.parse(res)['results'][0].nil?
       puts '*** WARNING: Page ID not found.'
       puts "             Page: #{title}"
-      puts "             Space Key: #{@spacekey}"
+      puts "             Space Key: #{spacekey}"
       return nil
     else
       return JSON.parse(res)['results'][0]['title'],
@@ -144,6 +150,28 @@ class PageObject < ConfluenceClient
              JSON.parse(res)['results'][0]['history']['createdDate'],
              JSON.parse(res)['results'][0]['version']['when'],
              JSON.parse(res)['results'][0]['_links']['webui']
+    end
+  end
+
+  def get_page_info_by_id(id, spacekey)
+    begin
+      res = RestClient.get "#{@@conf_url}/#{@@urn}/#{id}?os_username=#{@@login}&os_password=#{@@pwd}&expand=version,history"
+    rescue RestClient::ExceptionWithResponse => e
+      puts Nokogiri.XML(e.response)
+    end
+    # if res.nil? || JSON.parse(res)['results'].nil?
+    if res.nil?
+      puts "*** WARNING: Page not found for id: #{id}"
+      puts "             Space Key: #{spacekey}"
+      return nil
+    else
+      return JSON.parse(res)['title'],
+          JSON.parse(res)['id'],
+          JSON.parse(res)['version']['number'],
+          JSON.parse(res)['status'],
+          JSON.parse(res)['history']['createdDate'],
+          JSON.parse(res)['version']['when'],
+          JSON.parse(res)['_links']['webui']
     end
   end
 
