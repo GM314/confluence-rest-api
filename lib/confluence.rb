@@ -1,4 +1,5 @@
 require 'rest-client'
+require 'json'
 
 class ConfluenceClient
 
@@ -6,7 +7,7 @@ class ConfluenceClient
     @@conf_url = url
     @@login    = name
     @@pwd      = password
-    @@urn = 'rest/api/content'
+    @@urn      = 'rest/api/content'
   end
 
   def create_page_with_parent(title, spacekey, content, parentid)
