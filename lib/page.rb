@@ -57,6 +57,35 @@ class PageObject < ConfluenceClient
     JSON.parse(res)['body']['storage']['value']
   end
 
+  def delete_page(page_id)
+    begin
+      RestClient.delete "#{@@conf_url}/#{@@urn}/#{page_id}", {params: {
+          :os_username => @@login, :os_password => @@pwd
+      }}
+    rescue RestClient::ExceptionWithResponse => e
+      puts Nokogiri.XML(e.response)
+      return nil
+    end
+    true
+  end
+
+  # Return an array of all page attachment information
+  def get_all_attachments(page_id)
+
+    url = "#{@@conf_url}/#{@@urn}/#{page_id}/child/attachment?os_username=gregjm&os_password=dbgain82&status=current"
+
+    begin
+      atts = RestClient.get url, :content_type => 'application/json', :accept => 'json'
+    rescue RestClient::ExceptionWithResponse => e
+      puts Nokogiri.XML(e.response)
+      nil
+    end
+
+    unless atts.nil?
+      JSON.parse(atts)["results"]
+    end
+  end
+
   def attach_binary_file(file_name, file_basename)
 
     if File.exist?("#{file_basename}/#{file_name}")
@@ -78,18 +107,6 @@ class PageObject < ConfluenceClient
       puts "*** WARNING: File can't be found for #{file_basename}/#{file_name}"
       nil
     end
-  end
-
-  def delete_page(page_id)
-    begin
-      RestClient.delete "#{@@conf_url}/#{@@urn}/#{page_id}", {params: {
-          :os_username => @@login, :os_password => @@pwd
-      }}
-    rescue RestClient::ExceptionWithResponse => e
-      puts Nokogiri.XML(e.response)
-      return nil
-    end
-    true
   end
 
   def delete_attachment(attach_id)
@@ -122,6 +139,34 @@ class PageObject < ConfluenceClient
       puts Nokogiri.XML(e.response)
     end
     nil
+  end
+
+  def save_file_attachments(page_id, storage_path)
+    if File.writable? storage_path
+      att_array = get_all_attachments(page_id)
+
+      att_array.each do |line|
+        download_hash = line.to_hash
+        title = download_hash["title"]
+        url   = @@conf_url + download_hash["_links"]["download"] + "&os_username=#{@@login}&os_password=#{@@pwd}"
+
+        File.open(storage_path + title, 'wb') {|f|
+          block = proc { |response|
+            response.read_body do |chunk|
+              f.write chunk.to_s
+            end
+          }
+          RestClient::Request.execute(method: :get,
+                                      url: url,
+                                      block_response: block)
+        }
+      end
+    else
+      puts "*** ERROR: Cannot write to path: #{storage_path}"
+      puts "   Skipping."
+      return false
+    end
+    true
   end
 
   ##################################################################
