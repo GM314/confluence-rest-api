@@ -96,6 +96,25 @@ else
   end
 end
 
+##################################################
+# Get an array listing of the page attachment data
+##################################################
+page_obj = PageObject.new('My Page Title', space_key)
+att_array = get_all_attachments(page_obj.id)
+att_array.each do |line|
+  entry_hash = line.to_hash
+  title = entry_hash["title"]
+  uri   = entry_hash["_links"]["download"]
+  puts "Attachment title: #{title}"
+  puts "Attachment link : #{uri}"
+end
+
+######################################################
+# Save all attachments of a page to the given location
+######################################################
+page_obj = PageObject.new('My Page Title', space_key)
+page_obj.save_file_attachments(page_obj.id, './')
+
 ###############
 # Delete a page
 ###############
