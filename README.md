@@ -18,13 +18,31 @@ space_key = 'space'
 
 client  = ConfluenceClient.new(rest_server, username, password)
 
-########################
-# Query an existing page
-########################
+#################################
+# Query an existing page by title
+#################################
 
 page = PageObject.new('page_title', space_key)
 if page.id.nil? 
     puts '*** WARNING: Unable to open page: page_title'
+else
+    puts "Body:         #{page.rendered_body}"
+    puts "Fully styled  #{page.styled_view}"
+    puts "ID:           #{page.id}"
+    puts "Status:       #{page.status}"
+    puts "Version:      #{page.version}"
+    puts "Date Created: #{page.created}"
+    puts "Date Updated: #{page.last_update}"
+    puts "Page URL:     #{page.url}"
+end
+
+###############################
+# Query an existing page by id
+###############################
+
+page = PageObject.new(123456789, space_key)
+if page.title.nil? 
+    puts '*** WARNING: Unable to open page with id: 123456789'
 else
     puts "Body:         #{page.rendered_body}"
     puts "Fully styled  #{page.styled_view}"
