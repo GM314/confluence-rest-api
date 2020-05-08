@@ -166,7 +166,6 @@ class PageObject < ConfluenceClient
       puts "             Space Key: #{spacekey}"
       return nil
     else
-      pp JSON.parse(res)
       return JSON.parse(res)['title'],
           JSON.parse(res)['id'],
           JSON.parse(res)['version']['number'],
