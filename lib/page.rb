@@ -2,13 +2,13 @@ require 'nokogiri'
 
 class PageObject < ConfluenceClient
 
-  attr_reader :title, :id, :version, :status, :created, :last_update
+  attr_reader :title, :id, :version, :status, :created, :created_by, :last_updated
 
   def initialize(title_or_id, spacekey)
     if title_or_id.is_a? Integer
-      @title, @id, @version, @status, @created, @last_update, @url = get_page_info_by_id(title_or_id.to_s, spacekey)
+      @title, @id, @version, @status, @created, @created_by, @last_updated, @url = get_page_info_by_id(title_or_id.to_s, spacekey)
     else
-      @title, @id, @version, @status, @created, @last_update, @url = get_page_info_by_title(title_or_id, spacekey)
+      @title, @id, @version, @status, @created, @created_by, @last_updated, @url = get_page_info_by_title(title_or_id, spacekey)
     end
   end
 
@@ -148,6 +148,7 @@ class PageObject < ConfluenceClient
              JSON.parse(res)['results'][0]['version']['number'],
              JSON.parse(res)['results'][0]['status'],
              JSON.parse(res)['results'][0]['history']['createdDate'],
+             JSON.parse(res)['results'][0]['history']['createdBy']['username'],
              JSON.parse(res)['results'][0]['version']['when'],
              JSON.parse(res)['results'][0]['_links']['webui']
     end
@@ -165,11 +166,13 @@ class PageObject < ConfluenceClient
       puts "             Space Key: #{spacekey}"
       return nil
     else
+      pp JSON.parse(res)
       return JSON.parse(res)['title'],
           JSON.parse(res)['id'],
           JSON.parse(res)['version']['number'],
           JSON.parse(res)['status'],
           JSON.parse(res)['history']['createdDate'],
+          JSON.parse(res)['history']['createdBy']['username'],
           JSON.parse(res)['version']['when'],
           JSON.parse(res)['_links']['webui']
     end
