@@ -16,6 +16,9 @@ user_name   = 'username'
 password    = 'password'
 space_key   = 'space'
 
+##################################################################
+# A connection to the client must be done before any page requests
+##################################################################
 client  = ConfluenceClient.new(rest_server, user_name, password)
 
 #################################
