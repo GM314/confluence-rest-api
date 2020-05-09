@@ -72,7 +72,7 @@ class PageObject < ConfluenceClient
   # Return an array of all page attachment information
   def get_all_attachments(page_id)
 
-    url = "#{@@conf_url}/#{@@urn}/#{page_id}/child/attachment?os_username=gregjm&os_password=dbgain82&status=current"
+    url = "#{@@conf_url}/#{@@urn}/#{page_id}/child/attachment?os_username=#{@@login}&os_password=#{@@pwd}&status=current"
 
     begin
       atts = RestClient.get url, :content_type => 'application/json', :accept => 'json'
