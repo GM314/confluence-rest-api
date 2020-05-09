@@ -1,5 +1,7 @@
 # Ruby Confluence REST API Client
 
+[![Gem Version](https://badge.fury.io/rb/confluence-rest-api.svg)](https://badge.fury.io/rb/confluence-rest-api)
+
 ### Installation
 ```cassandraql
 gem install confluence-rest-api
