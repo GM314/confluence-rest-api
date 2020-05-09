@@ -5,9 +5,10 @@ Gem::Specification.new do |s|
   s.summary = %q{Ruby REST API Client to create, update, and view pages}
   s.authors = "Gregory J. Miller"
   s.files   = [
-      "lib/confluence.rb", "lib/page.rb", "lib/storage_format.rb", "README.md"
+      "lib/confluence-rest-api.rb", "lib/confluence.rb", "lib/page.rb", "lib/storage_format.rb", "README.md", "confluence-rest-api.gemspec"
   ]
-  s.require_paths = ["lib"]
   s.license       = "MIT"
   s.homepage      = "https://bitbucket.it.keysight.com/projects/DTSBAG/repos/confluence-rest-api/browse"
+  s.add_runtime_dependency 'rest-client', '~> 2.0', '>= 2.0.0'
+
 end
