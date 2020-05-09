@@ -1,4 +1,4 @@
-# Confluence REST API Client
+# Ruby Confluence REST API Client
 
 ### Installation
 ```cassandraql
@@ -7,9 +7,7 @@ gem install confluence-rest-api
 
 ### Usage
 ```ruby
-require_relative 'lib/confluence'
-require_relative 'lib/page'
-require_relative 'lib/storage_format'
+require 'confluence-rest-api'
 
 rest_server = 'https://myserver.com'
 user_name   = 'username'
@@ -88,13 +86,12 @@ page_obj = PageObject.new('My Page Title', space_key)
 id = page_obj.attachment_id('my_image.png')
 if id.nil?
   puts "Attachment doesn't exist."
-else
-  if page_obj.delete_attachment(id).nil?
+elsif page_obj.delete_attachment(id).nil?
     puts "*** WARNING: Attachment with ID #{id} was not deleted."
-  else
+else
     puts "Attachment with ID #{id} was deleted"
-  end
 end
+
 
 ##################################################
 # Get an array listing of the page attachment data
