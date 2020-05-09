@@ -14,7 +14,7 @@ require_relative 'lib/storage_format'
 rest_server = 'https://myserver.com'
 user_name   = 'username'
 password    = 'password'
-space_key = 'space'
+space_key   = 'space'
 
 client  = ConfluenceClient.new(rest_server, user_name, password)
 
@@ -131,5 +131,4 @@ end
 
 ### TODO
 1. Add tests
-1. Commit to GitHub
 
