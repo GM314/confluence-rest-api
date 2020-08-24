@@ -69,6 +69,29 @@ class PageObject < ConfluenceClient
     true
   end
 
+  def labels(page_id)
+    begin
+      res = RestClient.get "#{@@conf_url}/#{@@urn}/#{page_id}/label", {params: {
+          :os_username => @@login, :os_password => @@pwd,
+          :start => 0, :limit => 1000
+      }}
+    rescue RestClient::ExceptionWithResponse => e
+      puts Nokogiri.XML(e.response)
+      nil
+    end
+    size = JSON.parse(res)['size']
+    if size > 0
+      size -= 1
+      labels = Array.new
+      (0..size).each do |idx|
+        labels << JSON.parse(res)['results'][idx]["name"]
+      end
+      labels
+    else
+      nil
+    end
+  end
+
   # Return an array of all page attachment information
   def get_all_attachments(page_id)
 
