@@ -69,11 +69,11 @@ class PageObject < ConfluenceClient
     true
   end
 
-  def labels(page_id)
+  def labels
     begin
-      res = RestClient.get "#{@@conf_url}/#{@@urn}/#{page_id}/label", {params: {
+      res = RestClient.get "#{@@conf_url}/#{@@urn}/#{@id}/label", {params: {
           :os_username => @@login, :os_password => @@pwd,
-          :start => 0, :limit => 1000
+          :start => 0, :limit => 500
       }}
     rescue RestClient::ExceptionWithResponse => e
       puts Nokogiri.XML(e.response)
@@ -119,7 +119,7 @@ class PageObject < ConfluenceClient
       puts "*** WARNING: Label update failed for page with ID: #{@id}"
       nil
     else
-      puts JSON.parse(res)
+      # puts JSON.parse(res)
       true
     end
   end
