@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
   s.name    = %q{confluence-rest-api}
-  s.version = "1.0.7"
-  s.date    = %q{2020-04-17}
+  s.version = "1.0.9"
+  s.date    = %q{2020-08-25}
   s.summary = %q{Ruby REST API Client to create, update, and view pages}
   s.authors = "Gregory J. Miller"
   s.files   = [
