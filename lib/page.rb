@@ -92,6 +92,38 @@ class PageObject < ConfluenceClient
     end
   end
 
+  def add_labels(labels)
+    # payload = String.new('[{"os_username": "gregjm","os_password": "dbgain82"},')
+    payload = String.new('[')
+    json_label = '{
+        "prefix": "global",
+        "name": "__LABEL__"
+      }'.freeze
+
+    labels.each_with_index do |l, idx|
+      jl = json_label.sub(/__LABEL__/, l)
+      if idx == 0
+        payload += jl
+      else
+        payload += ',' + jl
+      end
+    end
+    payload = payload + ']'
+    puts "payload: #{payload}"
+
+    begin
+      res = RestClient.post "#{@@conf_url}/#{@@urn}/#{@id}/label?os_username=#{@@login}&os_password=#{@@pwd}", payload, :content_type => 'application/json'
+    rescue RestClient::ExceptionWithResponse => e
+      puts Nokogiri.XML(e.response)
+    end
+    if res.nil?
+      puts "*** WARNING: Label update failed for #{@id}"
+    else
+      puts JSON.parse(res)
+    end
+
+  end
+
   # Return an array of all page attachment information
   def get_all_attachments(page_id)
 
