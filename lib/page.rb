@@ -93,7 +93,6 @@ class PageObject < ConfluenceClient
   end
 
   def add_labels(labels)
-    # payload = String.new('[{"os_username": "gregjm","os_password": "dbgain82"},')
     payload = String.new('[')
     json_label = '{
         "prefix": "global",
@@ -109,7 +108,7 @@ class PageObject < ConfluenceClient
       end
     end
     payload = payload + ']'
-    puts "payload: #{payload}"
+    puts "Add label payload: #{payload}"
 
     begin
       res = RestClient.post "#{@@conf_url}/#{@@urn}/#{@id}/label?os_username=#{@@login}&os_password=#{@@pwd}", payload, :content_type => 'application/json'
@@ -117,10 +116,30 @@ class PageObject < ConfluenceClient
       puts Nokogiri.XML(e.response)
     end
     if res.nil?
-      puts "*** WARNING: Label update failed for #{@id}"
+      puts "*** WARNING: Label update failed for page with ID: #{@id}"
+      nil
     else
       puts JSON.parse(res)
+      true
     end
+  end
+
+  # Note that we must use query parameters here because deleting labels with a "/" will fail otherwise.
+  def delete_labels(labels)
+    labels.each do |l|
+      puts "Deleting label: #{l}"
+      begin
+        res = RestClient.delete "#{@@conf_url}/#{@@urn}/#{@id}/label?name=#{l}&os_username=#{@@login}&os_password=#{@@pwd}"
+      rescue RestClient::ExceptionWithResponse => e
+        puts Nokogiri.XML(e.response)
+      end
+      if res.nil?
+        puts "*** WARNING: Label removal failed for page with ID: #{@id}"
+        return nil
+      end
+    end
+
+    true
 
   end
 
