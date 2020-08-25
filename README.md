@@ -123,18 +123,14 @@ puts "Page Labels for #{page_obj.title}: #{page_labels}"
 # Adding labels to a page
 #########################
 page_obj = PageObject.new('My Page Title', space_key)
-new_labels = Array.new
-new_labels << 'my_label1'
-new_labels << 'my_label2'
+new_labels = ['my_label1','my_label2']
 page_obj.add_labels(new_labels)
 
 #############################
 # Deleting labels from a page
 #############################
 page_obj = PageObject.new('My Page Title', space_key)
-del_labels = Array.new
-del_labels << 'my_label1'
-del_labels << 'my_label2'
+del_labels = ['my_label1','my_label2']
 page_obj.delete_labels(del_labels)
 
 ###############
