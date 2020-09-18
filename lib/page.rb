@@ -1,4 +1,5 @@
 require 'nokogiri'
+require 'addressable/uri'
 
 class PageObject < ConfluenceClient
 
@@ -129,7 +130,10 @@ class PageObject < ConfluenceClient
     labels.each do |l|
       puts "Deleting label: #{l}"
       begin
-        res = RestClient.delete "#{@@conf_url}/#{@@urn}/#{@id}/label?name=#{l}&os_username=#{@@login}&os_password=#{@@pwd}"
+        uri = "#{@@conf_url}/#{@@urn}/#{@id}/label?name=#{l}&os_username=#{@@login}&os_password=#{@@pwd}"
+        uri = Addressable::URI.parse(uri).normalize.to_s
+        res = RestClient.delete uri
+
       rescue RestClient::ExceptionWithResponse => e
         puts Nokogiri.XML(e.response)
       end
