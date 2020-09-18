@@ -109,7 +109,7 @@ class PageObject < ConfluenceClient
       end
     end
     payload = payload + ']'
-    puts "Add label payload: #{payload}"
+    # puts "Add label payload: #{payload}"
 
     begin
       res = RestClient.post "#{@@conf_url}/#{@@urn}/#{@id}/label?os_username=#{@@login}&os_password=#{@@pwd}", payload, :content_type => 'application/json'
