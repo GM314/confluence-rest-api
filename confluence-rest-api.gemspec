@@ -10,5 +10,5 @@ Gem::Specification.new do |s|
   s.license       = "MIT"
   s.homepage      = "https://github.com/GM314/confluence-rest-api"
   s.add_runtime_dependency 'rest-client', '~> 2.0', '>= 2.0.0'
-
+  s.add_runtime_dependency 'addressable', '~> 2.3', '>= 2.3.7'
 end
