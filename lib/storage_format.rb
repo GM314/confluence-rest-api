@@ -1,4 +1,4 @@
-class StorageFormat
+class PagePayload
   attr_accessor :page_format
 
   VALID_OPTIONS = [:type, :title, :spacekey, :content, :pageid, :parentid, :version]
