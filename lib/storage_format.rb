@@ -20,94 +20,100 @@ class PagePayload
         puts "*** ERROR: Undefined parameter(s)\n    Inspection: #{self.inspect}"
         exit(false)
       else
-        %Q(
-        {
-          "type": "page",
-          "title": "#{@title}",
-          "space": {
-            "key": "#{@spacekey}"
+        p = {
+          type: 'page',
+          title: @title,
+          space: {
+            key: @spacekey
           },
-          "body": {
-            "storage": {
-              "value": "#{@content}",
-                "representation": "storage"
+          body: {
+            storage: {
+              value: @content,
+              representation: 'storage'
             }
           }
         }
-        )
+        p.to_json
       end
     when 'create_page_with_parent'
       if [@parentid, @title, @spacekey, @content].include?(nil)
         puts "*** ERROR: Undefined parameter(s)\n    Inspection: #{self.inspect}"
         exit(false)
       else
-        %Q(
-        {
-            "type": "page",
-            "ancestors": [{"type":"page","id":"#{@parentid}"}],
-            "title": "#{@title}",
-            "space": {
-                "key": "#{@spacekey}"
-            },
-            "body": {
-                "storage": {
-                    "value": "#{@content}",
-                    "representation": "storage"
-                }
+        p = {
+          type: 'page',
+          ancestors: [
+            {
+              type: 'page',
+              id: @parentid
             }
+          ],
+          title: @title,
+          space: {
+            key: @spacekey
+          },
+          body: {
+            storage: {
+              value: @content,
+              representation: 'storage'
+            }
+          }
         }
-        )
+        p.to_json
       end
     when 'update_page_with_no_parent'
       if [@pageid, @title, @spacekey, @content, @version].include?(nil)
         puts "*** ERROR: Undefined parameter(s)\n    Inspection: #{self.inspect}"
         exit(false)
       else
-        %Q(
-        {
-            "id":"#{@pageid}",
-            "type":"page",
-            "title":"#{@title}",
-            "space": {
-                "key":"#{@spacekey}"
-            },
-            "body": {
-                "storage": {
-                    "value":"#{@content}",
-                    "representation":"storage"
-                }
-            },
-            "version": {
-                "number":"#{@version}"
+        p = {
+          id: @pageid,
+          type: 'page',
+          title: @title,
+          space: {
+            key: @spacekey
+          },
+          body: {
+            storage: {
+              value: @content,
+              representation: 'storage'
             }
+          },
+          version: {
+            number: @version.to_i
+          }
         }
-        )
+        p.to_json
       end
     when 'update_page_with_parent'
       if [@pageid, @parentid, @title, @spacekey, @content, @version].include?(nil)
         puts "*** ERROR: Undefined parameter(s)\n    Inspection: #{self.inspect}"
         exit(false)
       else
-        %Q(
-        {
-            "id":"#{@pageid}",
-            "type":"page",
-            "ancestors": [{"type":"page","id":"#{@parentid}"}],
-            "title":"#{@title}",
-            "space": {
-                "key":"#{@spacekey}"
-            },
-            "body": {
-                "storage": {
-                    "value":"#{@content}",
-                    "representation":"storage"
-                }
-            },
-            "version": {
-                "number":"#{@version}"
+        p = {
+          id: @pageid,
+          type: 'page',
+          ancestors: [
+            {
+              type: 'page',
+              id: @parentid
             }
+          ],
+          title: @title,
+          space: {
+            key: @spacekey
+          },
+          body: {
+            storage: {
+              value: @content,
+              representation: 'storage'
+            }
+          },
+          version: {
+            number: @version.to_i
+          }
         }
-        )
+        p.to_json
       end
     else
       puts "***ERROR: Wrong parameters for #{self.class.name}"
