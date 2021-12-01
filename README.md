@@ -12,14 +12,13 @@ gem install confluence-rest-api
 require 'confluence-rest-api'
 
 rest_server = 'https://myserver.com'
-user_name   = 'username'
-password    = 'password'
+auth_token  = 'personal-auth-token'
 space_key   = 'space'
 
 ##################################################################
 # A connection to the client must be done before any page requests
 ##################################################################
-client  = ConfluenceClient.new(rest_server, user_name, password)
+client  = ConfluenceClient.new(rest_server, auth_token)
 
 #################################
 # Query an existing page by title
