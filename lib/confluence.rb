@@ -60,7 +60,6 @@ class ConfluenceClient
                   version:  version }
 
     update_page(PagePayload.new(page_meta).page_format, page_obj.id)
-
   end
 
   private
@@ -73,7 +72,7 @@ class ConfluenceClient
                       payload,
                       {
                         content_type: 'application/json',
-                        'Authorization': 'Bearer @@auth_token'
+                        'Authorization': "Bearer #{@@auth_token}"
                       }
     rescue RestClient::ExceptionWithResponse => error
       puts '*** ERROR: RestClient.post failed'
@@ -90,7 +89,7 @@ class ConfluenceClient
                      {
                        content_type: 'application/json',
                        accept: 'json',
-                       'Authorization': 'Bearer @@auth_token'
+                       'Authorization': "Bearer #{@@auth_token}"
                      }
     rescue RestClient::ExceptionWithResponse => error
       puts '*** ERROR: RestClient.put failed'

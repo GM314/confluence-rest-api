@@ -3,7 +3,7 @@ class PagePayload
 
   VALID_OPTIONS = [:type, :title, :spacekey, :content, :pageid, :parentid, :version]
 
-  def initialize(**options)
+  def initialize(options)
     options.each do |key, value|
       # puts "--> #{key} = #{value}"
       raise "\n*** Error: unknown option #{key.inspect}\nValid option are:\n#{VALID_OPTIONS}" unless (VALID_OPTIONS.include?(key))

@@ -26,7 +26,7 @@ class PageObject < ConfluenceClient
       res = RestClient.get "#{@@conf_url}/#{@@urn}/#{@id}",
                            {
                              params: { expand: 'body.styled_view' },
-                             'Authorization': 'Bearer @@auth_token'
+                             'Authorization': "Bearer #{@@auth_token}"
                            }
     rescue RestClient::ExceptionWithResponse => e
       puts Nokogiri.XML(e.response)
@@ -42,7 +42,7 @@ class PageObject < ConfluenceClient
       res = RestClient.get "#{@@conf_url}/#{@@urn}/#{@id}",
                            {
                              params: { expand: 'body.view' },
-                             'Authorization': 'Bearer @@auth_token'
+                             'Authorization': "Bearer #{@@auth_token}"
                            }
     rescue RestClient::ExceptionWithResponse => e
       puts Nokogiri.XML(e.response)
@@ -55,7 +55,7 @@ class PageObject < ConfluenceClient
       res = RestClient.get "#{@@conf_url}/#{@@urn}/#{@id}",
                            {
                              params: { expand: 'body.storage' },
-                             'Authorization': 'Bearer @@auth_token'
+                             'Authorization': "Bearer #{@@auth_token}"
                            }
     rescue RestClient::ExceptionWithResponse => e
       puts Nokogiri.XML(e.response)
@@ -67,7 +67,7 @@ class PageObject < ConfluenceClient
     begin
       RestClient.delete "#{@@conf_url}/#{@@urn}/#{page_id}",
                         {
-                          'Authorization': 'Bearer @@auth_token'
+                          'Authorization': "Bearer #{@@auth_token}"
                         }
     rescue RestClient::ExceptionWithResponse => e
       puts Nokogiri.XML(e.response)
@@ -81,7 +81,7 @@ class PageObject < ConfluenceClient
       res = RestClient.get "#{@@conf_url}/#{@@urn}/#{@id}/label",
                            {
                              params: { start: 0, limit: 500 },
-                             'Authorization': 'Bearer @@auth_token'
+                             'Authorization': "Bearer #{@@auth_token}"
                            }
     rescue RestClient::ExceptionWithResponse => e
       puts Nokogiri.XML(e.response)
@@ -123,7 +123,7 @@ class PageObject < ConfluenceClient
                             payload,
                             {
                               content_type: 'application/json',
-                              'Authorization': 'Bearer @@auth_token'
+                              'Authorization': "Bearer #{@@auth_token}"
                             }
     rescue RestClient::ExceptionWithResponse => e
       puts Nokogiri.XML(e.response)
@@ -146,7 +146,7 @@ class PageObject < ConfluenceClient
         uri = Addressable::URI.parse(uri).normalize.to_s
         res = RestClient.delete uri,
                                 {
-                                  'Authorization': 'Bearer @@auth_token'
+                                  'Authorization': "Bearer #{@@auth_token}"
                                 }
       rescue RestClient::ExceptionWithResponse => e
         puts Nokogiri.XML(e.response)
@@ -172,7 +172,7 @@ class PageObject < ConfluenceClient
                               content_type: 'application/json',
                               accept: 'json',
                               params: { status: 'current' },
-                              'Authorization': 'Bearer @@auth_token'
+                              'Authorization': "Bearer #{@@auth_token}"
                             }
     rescue RestClient::ExceptionWithResponse => e
       puts Nokogiri.XML(e.response)
@@ -199,7 +199,7 @@ class PageObject < ConfluenceClient
                         payload,
                         {
                           'X-Atlassian-Token': 'nocheck',
-                          'Authorization': 'Bearer @@auth_token'
+                          'Authorization': "Bearer #{@@auth_token}"
                         })
         true
       rescue RestClient::ExceptionWithResponse => e
@@ -216,7 +216,7 @@ class PageObject < ConfluenceClient
     begin
       RestClient.delete "#{@@conf_url}/#{@@urn}/#{attach_id}",
                         {
-                          'Authorization': 'Bearer @@auth_token'
+                          'Authorization': "Bearer #{@@auth_token}"
                         }
     rescue RestClient::ExceptionWithResponse => e
       puts Nokogiri.XML(e.response)
@@ -233,7 +233,7 @@ class PageObject < ConfluenceClient
       response = RestClient.get "#{@@conf_url}/#{@@urn}/#{@id}/child/attachment",
                                 {
                                   params: { filename: fname },
-                                  'Authorization': 'Bearer @@auth_token'
+                                  'Authorization': "Bearer #{@@auth_token}"
                                 }
       response = JSON.parse(response)
       return response['results'][0]['id'] if response['results'].any?
@@ -250,7 +250,7 @@ class PageObject < ConfluenceClient
       att_array.each do |line|
         download_hash = line.to_hash
         title = download_hash["title"]
-        url   = @@conf_url + download_hash["_links"]["download"] + "&os_username=#{@@login}&os_password=#{@@pwd}"
+        url   = @@conf_url + download_hash["_links"]["download"]
 
         File.open(storage_path + title, 'wb') {|f|
           block = proc { |response|
@@ -261,7 +261,7 @@ class PageObject < ConfluenceClient
           RestClient::Request.execute(method: :get,
                                       url: url,
                                       headers: {
-                                        'Authorization': 'Bearer @@auth_token'
+                                        'Authorization': "Bearer #{@@auth_token}"
                                       },
                                       block_response: block)
         }
@@ -288,7 +288,7 @@ class PageObject < ConfluenceClient
                                spaceKey: spacekey,
                                expand: 'version,history'
                              },
-                             'Authorization': 'Bearer @@auth_token'
+                             'Authorization': "Bearer #{@@auth_token}"
                            }
     rescue RestClient::ExceptionWithResponse => e
       puts Nokogiri.XML(e.response)
@@ -315,7 +315,7 @@ class PageObject < ConfluenceClient
       res = RestClient.get "#{@@conf_url}/#{@@urn}/#{id}",
                            {
                              params: { expand: 'version,history' },
-                             'Authorization': 'Bearer @@auth_token'
+                             'Authorization': "Bearer #{@@auth_token}"
                            }
     rescue RestClient::ExceptionWithResponse => e
       puts Nokogiri.XML(e.response)
