@@ -62,6 +62,20 @@ class ConfluenceClient
     update_page(PagePayload.new(page_meta).page_format, page_obj.id)
   end
 
+  def remove_page_history(id, version_number)
+    url = "#{@@conf_url}/rest/experimental/content/#{id}/version/#{version_number}"
+    begin
+      RestClient.delete url,
+                        {
+                          'Authorization': "Bearer #{@@auth_token}"
+                        }
+    rescue RestClient::ExceptionWithResponse => e
+      puts Nokogiri.XML(e.response)
+      return nil
+    end
+    true
+  end
+
   private
 
   def create_page(payload)
