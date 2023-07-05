@@ -3,10 +3,9 @@ require 'json'
 
 class ConfluenceClient
 
-  def initialize(url, name, password)
+  def initialize(url, token)
     @@conf_url = url
-    @@login    = name
-    @@pwd      = password
+    @@auth_token = token
     @@urn      = 'rest/api/content'
   end
 
@@ -61,16 +60,34 @@ class ConfluenceClient
                   version:  version }
 
     update_page(PagePayload.new(page_meta).page_format, page_obj.id)
+  end
 
+  def remove_page_history(id, version_number)
+    url = "#{@@conf_url}/rest/experimental/content/#{id}/version/#{version_number}"
+    begin
+      RestClient.delete url,
+                        {
+                          'Authorization': "Bearer #{@@auth_token}"
+                        }
+    rescue RestClient::ExceptionWithResponse => e
+      puts Nokogiri.XML(e.response)
+      return nil
+    end
+    true
   end
 
   private
 
   def create_page(payload)
 
-    url = "#{@@conf_url}/#{@@urn}?os_username=#{@@login}&os_password=#{@@pwd}"
+    url = "#{@@conf_url}/#{@@urn}"
     begin
-      RestClient.post url, payload, :content_type => 'application/json'
+      RestClient.post url,
+                      payload,
+                      {
+                        content_type: 'application/json',
+                        'Authorization': "Bearer #{@@auth_token}"
+                      }
     rescue RestClient::ExceptionWithResponse => error
       puts '*** ERROR: RestClient.post failed'
       pp error
@@ -79,9 +96,15 @@ class ConfluenceClient
 
   def update_page(payload, id)
 
-    url = "#{@@conf_url}/#{@@urn}/#{id}?os_username=#{@@login}&os_password=#{@@pwd}"
+    url = "#{@@conf_url}/#{@@urn}/#{id}"
     begin
-      RestClient.put url, payload, :content_type => 'application/json', :accept => 'json'
+      RestClient.put url,
+                     payload,
+                     {
+                       content_type: 'application/json',
+                       accept: 'json',
+                       'Authorization': "Bearer #{@@auth_token}"
+                     }
     rescue RestClient::ExceptionWithResponse => error
       puts '*** ERROR: RestClient.put failed'
       puts error

@@ -2,7 +2,6 @@ require 'nokogiri'
 require 'addressable/uri'
 
 class PageObject < ConfluenceClient
-
   attr_reader :title, :id, :version, :status, :created, :created_by, :last_updated
 
   def initialize(title_or_id, spacekey)
@@ -24,9 +23,11 @@ class PageObject < ConfluenceClient
   #####################################################
   def styled_view
     begin
-      res = RestClient.get "#{@@conf_url}/#{@@urn}/#{@id}", {params: {
-          :expand => 'body.styled_view', :os_username => @@login, :os_password => @@pwd
-      }}
+      res = RestClient.get "#{@@conf_url}/#{@@urn}/#{@id}",
+                           {
+                             params: { expand: 'body.styled_view' },
+                             'Authorization': "Bearer #{@@auth_token}"
+                           }
     rescue RestClient::ExceptionWithResponse => e
       puts Nokogiri.XML(e.response)
     end
@@ -38,9 +39,11 @@ class PageObject < ConfluenceClient
   ##################################################
   def rendered_body
     begin
-      res = RestClient.get "#{@@conf_url}/#{@@urn}/#{@id}", {params: {
-          :expand => 'body.view', :os_username => @@login, :os_password => @@pwd
-      }}
+      res = RestClient.get "#{@@conf_url}/#{@@urn}/#{@id}",
+                           {
+                             params: { expand: 'body.view' },
+                             'Authorization': "Bearer #{@@auth_token}"
+                           }
     rescue RestClient::ExceptionWithResponse => e
       puts Nokogiri.XML(e.response)
     end
@@ -49,9 +52,11 @@ class PageObject < ConfluenceClient
 
   def storage_format
     begin
-      res = RestClient.get "#{@@conf_url}/#{@@urn}/#{@id}", {params: {
-          :expand => 'body.storage', :os_username => @@login, :os_password => @@pwd
-      }}
+      res = RestClient.get "#{@@conf_url}/#{@@urn}/#{@id}",
+                           {
+                             params: { expand: 'body.storage' },
+                             'Authorization': "Bearer #{@@auth_token}"
+                           }
     rescue RestClient::ExceptionWithResponse => e
       puts Nokogiri.XML(e.response)
     end
@@ -60,9 +65,10 @@ class PageObject < ConfluenceClient
 
   def delete_page(page_id)
     begin
-      RestClient.delete "#{@@conf_url}/#{@@urn}/#{page_id}", {params: {
-          :os_username => @@login, :os_password => @@pwd
-      }}
+      RestClient.delete "#{@@conf_url}/#{@@urn}/#{page_id}",
+                        {
+                          'Authorization': "Bearer #{@@auth_token}"
+                        }
     rescue RestClient::ExceptionWithResponse => e
       puts Nokogiri.XML(e.response)
       return nil
@@ -72,10 +78,11 @@ class PageObject < ConfluenceClient
 
   def labels
     begin
-      res = RestClient.get "#{@@conf_url}/#{@@urn}/#{@id}/label", {params: {
-          :os_username => @@login, :os_password => @@pwd,
-          :start => 0, :limit => 500
-      }}
+      res = RestClient.get "#{@@conf_url}/#{@@urn}/#{@id}/label",
+                           {
+                             params: { start: 0, limit: 500 },
+                             'Authorization': "Bearer #{@@auth_token}"
+                           }
     rescue RestClient::ExceptionWithResponse => e
       puts Nokogiri.XML(e.response)
       nil
@@ -112,7 +119,12 @@ class PageObject < ConfluenceClient
     # puts "Add label payload: #{payload}"
 
     begin
-      res = RestClient.post "#{@@conf_url}/#{@@urn}/#{@id}/label?os_username=#{@@login}&os_password=#{@@pwd}", payload, :content_type => 'application/json'
+      res = RestClient.post "#{@@conf_url}/#{@@urn}/#{@id}/label",
+                            payload,
+                            {
+                              content_type: 'application/json',
+                              'Authorization': "Bearer #{@@auth_token}"
+                            }
     rescue RestClient::ExceptionWithResponse => e
       puts Nokogiri.XML(e.response)
     end
@@ -130,10 +142,12 @@ class PageObject < ConfluenceClient
     labels.each do |l|
       puts "Deleting label: #{l}"
       begin
-        uri = "#{@@conf_url}/#{@@urn}/#{@id}/label?name=#{l}&os_username=#{@@login}&os_password=#{@@pwd}"
+        uri = "#{@@conf_url}/#{@@urn}/#{@id}/label?name=#{l}"
         uri = Addressable::URI.parse(uri).normalize.to_s
-        res = RestClient.delete uri
-
+        res = RestClient.delete uri,
+                                {
+                                  'Authorization': "Bearer #{@@auth_token}"
+                                }
       rescue RestClient::ExceptionWithResponse => e
         puts Nokogiri.XML(e.response)
       end
@@ -150,10 +164,16 @@ class PageObject < ConfluenceClient
   # Return an array of all page attachment information
   def get_all_attachments(page_id)
 
-    url = "#{@@conf_url}/#{@@urn}/#{page_id}/child/attachment?os_username=#{@@login}&os_password=#{@@pwd}&status=current"
+    url = "#{@@conf_url}/#{@@urn}/#{page_id}/child/attachment"
 
     begin
-      atts = RestClient.get url, :content_type => 'application/json', :accept => 'json'
+      atts = RestClient.get url,
+                            {
+                              content_type: 'application/json',
+                              accept: 'json',
+                              params: { status: 'current' },
+                              'Authorization': "Bearer #{@@auth_token}"
+                            }
     rescue RestClient::ExceptionWithResponse => e
       puts Nokogiri.XML(e.response)
       nil
@@ -173,9 +193,14 @@ class PageObject < ConfluenceClient
           comment: 'Automated Ruby import',
           minorEdit: true
       }
-      url_mod = "#{@@conf_url}/#{@@urn}/#{@id}/child/attachment?os_username=#{@@login}&os_password=#{@@pwd}"
+      url_mod = "#{@@conf_url}/#{@@urn}/#{@id}/child/attachment"
       begin
-        RestClient.post(url_mod, payload, {"X-Atlassian-Token" => "nocheck"})
+        RestClient.post(url_mod,
+                        payload,
+                        {
+                          'X-Atlassian-Token': 'nocheck',
+                          'Authorization': "Bearer #{@@auth_token}"
+                        })
         true
       rescue RestClient::ExceptionWithResponse => e
         puts Nokogiri.XML(e.response)
@@ -189,9 +214,10 @@ class PageObject < ConfluenceClient
 
   def delete_attachment(attach_id)
     begin
-      RestClient.delete "#{@@conf_url}/#{@@urn}/#{attach_id}", {params: {
-          :os_username => @@login, :os_password => @@pwd
-      }}
+      RestClient.delete "#{@@conf_url}/#{@@urn}/#{attach_id}",
+                        {
+                          'Authorization': "Bearer #{@@auth_token}"
+                        }
     rescue RestClient::ExceptionWithResponse => e
       puts Nokogiri.XML(e.response)
       return nil
@@ -200,19 +226,17 @@ class PageObject < ConfluenceClient
   end
 
   def attachment_id(attachment_name)
-
     fname = attachment_name.dup
     fname = CGI.escape(fname)
 
     begin
-      response = RestClient.get "#{@@conf_url}/#{@@urn}/#{@id}/child/attachment", {params: {
-          :filename => fname, 'os_username' => @@login, 'os_password' => @@pwd
-      }}
-
+      response = RestClient.get "#{@@conf_url}/#{@@urn}/#{@id}/child/attachment",
+                                {
+                                  params: { filename: fname },
+                                  'Authorization': "Bearer #{@@auth_token}"
+                                }
       response = JSON.parse(response)
-      if response['results'].any?
-        return response['results'][0]['id']
-      end
+      return response['results'][0]['id'] if response['results'].any?
     rescue RestClient::ExceptionWithResponse => e
       puts Nokogiri.XML(e.response)
     end
@@ -226,7 +250,7 @@ class PageObject < ConfluenceClient
       att_array.each do |line|
         download_hash = line.to_hash
         title = download_hash["title"]
-        url   = @@conf_url + download_hash["_links"]["download"] + "&os_username=#{@@login}&os_password=#{@@pwd}"
+        url   = @@conf_url + download_hash["_links"]["download"]
 
         File.open(storage_path + title, 'wb') {|f|
           block = proc { |response|
@@ -236,6 +260,9 @@ class PageObject < ConfluenceClient
           }
           RestClient::Request.execute(method: :get,
                                       url: url,
+                                      headers: {
+                                        'Authorization': "Bearer #{@@auth_token}"
+                                      },
                                       block_response: block)
         }
       end
@@ -254,9 +281,15 @@ class PageObject < ConfluenceClient
   # Here we can return various metadata for a given page.
   def get_page_info_by_title(title, spacekey)
     begin
-      res = RestClient.get "#{@@conf_url}/#{@@urn}", {params: {
-          :title => title, :spaceKey => spacekey, :os_username => @@login, :os_password => @@pwd, :expand => 'version,history'
-      }}
+      res = RestClient.get "#{@@conf_url}/#{@@urn}",
+                           {
+                             params: {
+                               title: title,
+                               spaceKey: spacekey,
+                               expand: 'version,history'
+                             },
+                             'Authorization': "Bearer #{@@auth_token}"
+                           }
     rescue RestClient::ExceptionWithResponse => e
       puts Nokogiri.XML(e.response)
     end
@@ -279,7 +312,11 @@ class PageObject < ConfluenceClient
 
   def get_page_info_by_id(id, spacekey)
     begin
-      res = RestClient.get "#{@@conf_url}/#{@@urn}/#{id}?os_username=#{@@login}&os_password=#{@@pwd}&expand=version,history"
+      res = RestClient.get "#{@@conf_url}/#{@@urn}/#{id}",
+                           {
+                             params: { expand: 'version,history' },
+                             'Authorization': "Bearer #{@@auth_token}"
+                           }
     rescue RestClient::ExceptionWithResponse => e
       puts Nokogiri.XML(e.response)
     end
